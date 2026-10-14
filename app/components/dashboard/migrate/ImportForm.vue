@@ -35,24 +35,9 @@ const {
   reset,
 } = useLinkImport()
 
-function triggerFileInput() {
-  if (previewMode || isImporting.value)
-    return
-  fileInputRef.value?.click()
-}
-
 function handleFileSelect(event: Event) {
   const input = event.target as HTMLInputElement
   const file = input.files?.[0]
-  if (file)
-    void handleFile(file)
-}
-
-function handleDrop(event: DragEvent) {
-  isDragging.value = false
-  if (previewMode || isImporting.value)
-    return
-  const file = event.dataTransfer?.files?.[0]
   if (file)
     void handleFile(file)
 }
@@ -104,52 +89,57 @@ function resetForm() {
       </Alert>
 
       <div v-if="!parsedData && !importResult" class="space-y-4">
-        <Tabs v-model="inputMode" default-value="file">
-          <TabsList class="grid w-full grid-cols-2">
-            <TabsTrigger value="file">
-              <Upload class="mr-2 size-4" />
-              {{ $t('migrate.import.tab_file') }}
-            </TabsTrigger>
-            <TabsTrigger value="paste">
-              <ClipboardPaste class="mr-2 size-4" />
-              {{ $t('migrate.import.tab_paste') }}
-            </TabsTrigger>
-          </TabsList>
+        <div class="grid w-full grid-cols-2 gap-1 rounded-lg bg-muted p-1">
+          <button
+            type="button"
+            class="inline-flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium transition-all"
+            :class="inputMode === 'file' ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'"
+            @click="inputMode = 'file'"
+          >
+            <Upload class="mr-2 size-4" />
+            {{ $t('migrate.import.tab_file') }}
+          </button>
+          <button
+            type="button"
+            class="inline-flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium transition-all"
+            :class="inputMode === 'paste' ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'"
+            @click="inputMode = 'paste'"
+          >
+            <ClipboardPaste class="mr-2 size-4" />
+            {{ $t('migrate.import.tab_paste') }}
+          </button>
+        </div>
 
-          <TabsContent value="file" class="pt-2">
+        <div v-show="inputMode === 'file'" class="pt-2">
+          <div
+            class="
+              relative flex flex-col items-center justify-center
+              rounded-xl border-2 border-dashed p-8 text-center
+              transition-all select-none
+            "
+            :class="[
+              isDragging
+                ? 'border-primary bg-primary/10 ring-2 ring-primary/30'
+                : `
+                  border-border/80
+                  hover:border-primary/60 hover:bg-muted/40
+                `,
+              previewMode ? 'cursor-not-allowed opacity-60' : '',
+            ]"
+          >
             <input
               ref="fileInputRef"
               type="file"
               accept=".json,application/json"
-              class="hidden"
+              class="absolute inset-0 z-20 h-full w-full cursor-pointer opacity-0"
               :disabled="previewMode"
+              @dragover="isDragging = true"
+              @dragenter="isDragging = true"
+              @dragleave="isDragging = false"
+              @drop="isDragging = false"
               @change="handleFileSelect"
             >
-            <div
-              class="
-                relative flex cursor-pointer flex-col items-center
-                justify-center rounded-xl border-2 border-dashed p-8 text-center
-                transition-all select-none
-              "
-              :class="[
-                isDragging
-                  ? 'border-primary bg-primary/10 ring-2 ring-primary/30'
-                  : `
-                    border-border/80
-                    hover:border-primary/60 hover:bg-muted/40
-                  `,
-                previewMode ? 'cursor-not-allowed opacity-60' : '',
-              ]"
-              role="button"
-              tabindex="0"
-              :aria-disabled="previewMode"
-              @click="triggerFileInput"
-              @keydown.enter.space.prevent="triggerFileInput"
-              @dragover.prevent="isDragging = true"
-              @dragenter.prevent="isDragging = true"
-              @dragleave.prevent="isDragging = false"
-              @drop.prevent="handleDrop"
-            >
+            <div class="pointer-events-none flex flex-col items-center justify-center">
               <div class="mb-3 rounded-full bg-primary/10 p-3 text-primary">
                 <Upload class="size-6" />
               </div>
@@ -164,61 +154,61 @@ function resetForm() {
                   type="button"
                   variant="outline"
                   size="sm"
+                  tabindex="-1"
                   :disabled="previewMode"
-                  @click.stop="triggerFileInput"
                 >
                   <FileJson class="mr-2 size-4" />
                   {{ $t('migrate.import.choose_file') }}
                 </Button>
               </div>
             </div>
-            <p v-if="previewMode" class="mt-2 text-sm text-muted-foreground">
-              {{ $t('migrate.import.preview_mode_tip') }}
-            </p>
-          </TabsContent>
+          </div>
+          <p v-if="previewMode" class="mt-2 text-sm text-muted-foreground">
+            {{ $t('migrate.import.preview_mode_tip') }}
+          </p>
+        </div>
 
-          <TabsContent value="paste" class="space-y-3 pt-2">
-            <div class="flex items-center justify-between">
-              <span class="text-xs text-muted-foreground">
-                {{ $t('migrate.import.paste_description') }}
-              </span>
-              <Button
-                v-if="pastedJson.trim()"
-                type="button"
-                variant="ghost"
-                size="sm"
-                class="
-                  h-7 px-2 text-xs text-muted-foreground
-                  hover:text-foreground
-                "
-                @click="pastedJson = ''"
-              >
-                <Trash2 class="mr-1 size-3" />
-                {{ $t('migrate.import.clear') }}
-              </Button>
-            </div>
-            <Textarea
-              v-model="pastedJson"
-              :rows="8"
-              :placeholder="$t('migrate.import.paste_placeholder')"
-              class="max-h-72 resize-y font-mono text-xs"
-              :disabled="previewMode"
-            />
-            <div class="flex justify-end">
-              <Button
-                type="button"
-                :disabled="!pastedJson.trim() || previewMode"
-                @click="handlePasteSubmit"
-              >
-                <ClipboardPaste class="mr-2 size-4" />
-                {{ $t('migrate.import.paste_button') }}
-              </Button>
-            </div>
-            <p v-if="previewMode" class="mt-2 text-sm text-muted-foreground">
-              {{ $t('migrate.import.preview_mode_tip') }}
-            </p>
-          </TabsContent>
-        </Tabs>
+        <div v-show="inputMode === 'paste'" class="space-y-3 pt-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs text-muted-foreground">
+              {{ $t('migrate.import.paste_description') }}
+            </span>
+            <Button
+              v-if="pastedJson.trim()"
+              type="button"
+              variant="ghost"
+              size="sm"
+              class="
+                h-7 px-2 text-xs text-muted-foreground
+                hover:text-foreground
+              "
+              @click="pastedJson = ''"
+            >
+              <Trash2 class="mr-1 size-3" />
+              {{ $t('migrate.import.clear') }}
+            </Button>
+          </div>
+          <Textarea
+            v-model="pastedJson"
+            :rows="8"
+            :placeholder="$t('migrate.import.paste_placeholder')"
+            class="max-h-72 resize-y font-mono text-xs"
+            :disabled="previewMode"
+          />
+          <div class="flex justify-end">
+            <Button
+              type="button"
+              :disabled="!pastedJson.trim() || previewMode"
+              @click="handlePasteSubmit"
+            >
+              <ClipboardPaste class="mr-2 size-4" />
+              {{ $t('migrate.import.paste_button') }}
+            </Button>
+          </div>
+          <p v-if="previewMode" class="mt-2 text-sm text-muted-foreground">
+            {{ $t('migrate.import.preview_mode_tip') }}
+          </p>
+        </div>
       </div>
 
       <div v-if="parsedData && !importResult" class="space-y-4">
