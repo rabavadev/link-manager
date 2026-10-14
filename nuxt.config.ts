@@ -40,7 +40,7 @@ export default defineNuxtConfig({
     webhookUrl: '',
     webhookSecret: '',
     public: {
-      previewMode: '',
+      previewMode: false,
       slugDefaultLength: '6',
       kvBatchLimit: '50',
       maxUrlLength: '16384',

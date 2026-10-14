@@ -43,7 +43,7 @@ function handleFileSelect(event: Event) {
 }
 
 function handlePasteSubmit() {
-  if (previewMode || isImporting.value || !pastedJson.value.trim())
+  if (Boolean(previewMode) || isImporting.value || !pastedJson.value.trim())
     return
   void handleJsonText(pastedJson.value, 'pasted-data.json')
 }
@@ -92,8 +92,16 @@ function resetForm() {
         <div class="grid w-full grid-cols-2 gap-1 rounded-lg bg-muted p-1">
           <button
             type="button"
-            class="inline-flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium transition-all"
-            :class="inputMode === 'file' ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'"
+            class="
+              inline-flex items-center justify-center rounded-md px-3 py-2
+              text-sm font-medium transition-all
+            "
+            :class="inputMode === 'file' ? `
+              bg-background text-foreground shadow-sm
+            ` : `
+              text-muted-foreground
+              hover:text-foreground
+            `"
             @click="inputMode = 'file'"
           >
             <Upload class="mr-2 size-4" />
@@ -101,8 +109,16 @@ function resetForm() {
           </button>
           <button
             type="button"
-            class="inline-flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium transition-all"
-            :class="inputMode === 'paste' ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'"
+            class="
+              inline-flex items-center justify-center rounded-md px-3 py-2
+              text-sm font-medium transition-all
+            "
+            :class="inputMode === 'paste' ? `
+              bg-background text-foreground shadow-sm
+            ` : `
+              text-muted-foreground
+              hover:text-foreground
+            `"
             @click="inputMode = 'paste'"
           >
             <ClipboardPaste class="mr-2 size-4" />
@@ -113,9 +129,8 @@ function resetForm() {
         <div v-show="inputMode === 'file'" class="pt-2">
           <div
             class="
-              relative flex flex-col items-center justify-center
-              rounded-xl border-2 border-dashed p-8 text-center
-              transition-all select-none
+              relative flex flex-col items-center justify-center rounded-xl
+              border-2 border-dashed p-8 text-center transition-all select-none
             "
             :class="[
               isDragging
@@ -124,22 +139,26 @@ function resetForm() {
                   border-border/80
                   hover:border-primary/60 hover:bg-muted/40
                 `,
-              previewMode ? 'cursor-not-allowed opacity-60' : '',
+              Boolean(previewMode) ? 'cursor-not-allowed opacity-60' : '',
             ]"
           >
             <input
               ref="fileInputRef"
               type="file"
               accept=".json,application/json"
-              class="absolute inset-0 z-20 h-full w-full cursor-pointer opacity-0"
-              :disabled="previewMode"
+              class="absolute inset-0 z-20 size-full cursor-pointer opacity-0"
+              :disabled="Boolean(previewMode)"
               @dragover="isDragging = true"
               @dragenter="isDragging = true"
               @dragleave="isDragging = false"
               @drop="isDragging = false"
               @change="handleFileSelect"
             >
-            <div class="pointer-events-none flex flex-col items-center justify-center">
+            <div
+              class="
+                pointer-events-none flex flex-col items-center justify-center
+              "
+            >
               <div class="mb-3 rounded-full bg-primary/10 p-3 text-primary">
                 <Upload class="size-6" />
               </div>
@@ -155,7 +174,7 @@ function resetForm() {
                   variant="outline"
                   size="sm"
                   tabindex="-1"
-                  :disabled="previewMode"
+                  :disabled="Boolean(previewMode)"
                 >
                   <FileJson class="mr-2 size-4" />
                   {{ $t('migrate.import.choose_file') }}
@@ -163,7 +182,11 @@ function resetForm() {
               </div>
             </div>
           </div>
-          <p v-if="previewMode" class="mt-2 text-sm text-muted-foreground">
+          <p
+            v-if="Boolean(previewMode)" class="
+              mt-2 text-sm text-muted-foreground
+            "
+          >
             {{ $t('migrate.import.preview_mode_tip') }}
           </p>
         </div>
@@ -193,19 +216,23 @@ function resetForm() {
             :rows="8"
             :placeholder="$t('migrate.import.paste_placeholder')"
             class="max-h-72 resize-y font-mono text-xs"
-            :disabled="previewMode"
+            :disabled="Boolean(previewMode)"
           />
           <div class="flex justify-end">
             <Button
               type="button"
-              :disabled="!pastedJson.trim() || previewMode"
+              :disabled="!pastedJson.trim() || Boolean(previewMode)"
               @click="handlePasteSubmit"
             >
               <ClipboardPaste class="mr-2 size-4" />
               {{ $t('migrate.import.paste_button') }}
             </Button>
           </div>
-          <p v-if="previewMode" class="mt-2 text-sm text-muted-foreground">
+          <p
+            v-if="Boolean(previewMode)" class="
+              mt-2 text-sm text-muted-foreground
+            "
+          >
             {{ $t('migrate.import.preview_mode_tip') }}
           </p>
         </div>
@@ -254,7 +281,7 @@ function resetForm() {
         <Button
           v-else
           class="w-full"
-          :disabled="previewMode"
+          :disabled="Boolean(previewMode)"
           @click="importLinks"
         >
           <Upload aria-hidden="true" class="size-4" />
