@@ -49,9 +49,16 @@
     },
     "import": {
       "title": "Impor Tautan",
-      "description": "Unggah file JSON untuk mengimpor tautan",
+      "description": "Unggah file JSON atau tempel JSON untuk mengimpor tautan",
       "preview_mode_tip": "Mode pratinjau tidak mendukung impor tautan.",
+      "tab_file": "Unggah Berkas",
+      "tab_paste": "Tempel JSON",
+      "choose_file": "Pilih Berkas JSON",
       "dropzone": "Jatuhkan file JSON di sini atau klik untuk mengunggah",
+      "paste_placeholder": "Tempel konten JSON di sini...",
+      "paste_button": "Impor JSON yang Ditempel",
+      "paste_description": "Tempel konten JSON yang diekspor dari Sink.",
+      "clear": "Bersihkan",
       "links_found": "{count} tautan siap diimpor",
       "button": "Mulai Impor",
       "importing": "Mengimpor...",
@@ -70,6 +77,7 @@
         "invalid_json": "File JSON tidak valid",
         "invalid_format": "Format file tidak valid. Gunakan file yang diekspor dari Sink.",
         "parse_error": "Gagal mengurai file",
+        "empty_content": "Konten JSON tidak boleh kosong",
         "batch_failed": "Batch impor ini gagal."
       }
     }

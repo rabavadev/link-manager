@@ -49,9 +49,16 @@
     },
     "import": {
       "title": "Nhập liên kết",
-      "description": "Tải lên tệp JSON để nhập liên kết",
+      "description": "Tải lên tệp JSON hoặc dán JSON để nhập liên kết",
       "preview_mode_tip": "Chế độ xem trước không hỗ trợ nhập liên kết.",
+      "tab_file": "Tải lên tệp",
+      "tab_paste": "Dán JSON",
+      "choose_file": "Chọn tệp JSON",
       "dropzone": "Kéo thả tệp JSON vào đây hoặc nhấp để tải lên",
+      "paste_placeholder": "Dán nội dung JSON vào đây...",
+      "paste_button": "Nhập JSON đã dán",
+      "paste_description": "Dán nội dung JSON đã xuất từ Sink.",
+      "clear": "Xóa",
       "links_found": "{count} liên kết sẵn sàng nhập",
       "button": "Bắt đầu nhập",
       "importing": "Đang nhập...",
@@ -70,6 +77,7 @@
         "invalid_json": "Tệp JSON không hợp lệ",
         "invalid_format": "Định dạng tệp không hợp lệ. Vui lòng sử dụng tệp được xuất từ Sink.",
         "parse_error": "Không thể phân tích tệp",
+        "empty_content": "Nội dung JSON không được để trống",
         "batch_failed": "Lô nhập này đã thất bại."
       }
     }

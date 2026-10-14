@@ -49,9 +49,16 @@
     },
     "import": {
       "title": "Importar links",
-      "description": "Envie um arquivo JSON para importar links",
+      "description": "Envie um arquivo JSON ou cole o JSON para importar links",
       "preview_mode_tip": "O modo de visualização não permite importar links.",
+      "tab_file": "Enviar Arquivo",
+      "tab_paste": "Colar JSON",
+      "choose_file": "Escolher Arquivo JSON",
       "dropzone": "Arraste o arquivo JSON aqui ou clique para enviar",
+      "paste_placeholder": "Cole o conteúdo JSON aqui...",
+      "paste_button": "Importar JSON Colado",
+      "paste_description": "Cole o conteúdo JSON exportado do Sink.",
+      "clear": "Limpar",
       "links_found": "{count} links prontos para importar",
       "button": "Iniciar importação",
       "importing": "Importando...",
@@ -70,6 +77,7 @@
         "invalid_json": "Arquivo JSON inválido",
         "invalid_format": "Formato de arquivo inválido. Por favor, use um arquivo exportado do Sink.",
         "parse_error": "Falha ao analisar o arquivo",
+        "empty_content": "O conteúdo JSON não pode estar vazio",
         "batch_failed": "Este lote de importação falhou."
       }
     }

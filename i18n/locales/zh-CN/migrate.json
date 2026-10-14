@@ -49,9 +49,16 @@
     },
     "import": {
       "title": "导入链接",
-      "description": "上传 JSON 文件以导入链接",
+      "description": "上传 JSON 文件或粘贴 JSON 以导入链接",
       "preview_mode_tip": "预览模式不支持导入链接。",
+      "tab_file": "上传文件",
+      "tab_paste": "粘贴 JSON",
+      "choose_file": "选择 JSON 文件",
       "dropzone": "拖拽 JSON 文件到此处或点击上传",
+      "paste_placeholder": "在此粘贴 JSON 内容...",
+      "paste_button": "导入粘贴的 JSON",
+      "paste_description": "粘贴从 Sink 导出的 JSON 内容或符合规范的数据。",
+      "clear": "清空",
       "links_found": "{count} 条链接可导入",
       "button": "开始导入",
       "importing": "导入中...",
@@ -70,6 +77,7 @@
         "invalid_json": "无效的 JSON 文件",
         "invalid_format": "文件格式无效，请使用从 Sink 导出的文件",
         "parse_error": "文件解析失败",
+        "empty_content": "JSON 内容不能为空",
         "batch_failed": "此批链接导入失败。"
       }
     }

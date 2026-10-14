@@ -49,9 +49,16 @@
     },
     "import": {
       "title": "Importer des liens",
-      "description": "Téléchargez un fichier JSON pour importer des liens",
+      "description": "Téléchargez un fichier JSON ou collez du JSON pour importer des liens",
       "preview_mode_tip": "Le mode aperçu ne permet pas d'importer des liens.",
+      "tab_file": "Téléverser un fichier",
+      "tab_paste": "Coller le JSON",
+      "choose_file": "Choisir un fichier JSON",
       "dropzone": "Déposez le fichier JSON ici ou cliquez pour télécharger",
+      "paste_placeholder": "Collez le contenu JSON ici...",
+      "paste_button": "Importer le JSON collé",
+      "paste_description": "Collez le contenu JSON exporté depuis Sink.",
+      "clear": "Effacer",
       "links_found": "{count} liens prêts à importer",
       "button": "Lancer l'import",
       "importing": "Importation...",
@@ -70,6 +77,7 @@
         "invalid_json": "Fichier JSON invalide",
         "invalid_format": "Format de fichier invalide. Veuillez utiliser un fichier exporté depuis Sink.",
         "parse_error": "Échec de l'analyse du fichier",
+        "empty_content": "Le contenu JSON ne peut pas être vide",
         "batch_failed": "Ce lot d’importation a échoué."
       }
     }

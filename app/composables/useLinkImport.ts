@@ -52,17 +52,37 @@ export function useLinkImport(options: UseLinkImportOptions = {}) {
     importProgress.value = 0
     status.value = 'selecting'
 
-    if (!file.name.endsWith('.json')) {
-      parseError.value = t('migrate.import.errors.invalid_json')
+    if (!file.name.toLowerCase().endsWith('.json')) {
+      const err = t('migrate.import.errors.invalid_json')
+      parseError.value = err
+      if (typeof toast?.error === 'function')
+        toast.error(err)
+      return
+    }
+
+    let text: string
+    try {
+      text = await file.text()
+    }
+    catch {
+      const err = t('migrate.import.errors.parse_error')
+      parseError.value = err
+      if (typeof toast?.error === 'function')
+        toast.error(err)
       return
     }
 
     let data: unknown
     try {
-      data = JSON.parse(await file.text())
+      data = JSON.parse(text)
     }
-    catch {
-      parseError.value = t('migrate.import.errors.parse_error')
+    catch (e) {
+      const err = t('migrate.import.errors.parse_error')
+      parseError.value = err
+      if (e instanceof Error)
+        validationErrors.value = [e.message]
+      if (typeof toast?.error === 'function')
+        toast.error(err)
       return
     }
 
@@ -76,12 +96,73 @@ export function useLinkImport(options: UseLinkImportOptions = {}) {
         errors.push(`… (+${result.error.issues.length - 10})`)
 
       validationErrors.value = errors
-      parseError.value = t('migrate.import.errors.invalid_format')
+      const err = t('migrate.import.errors.invalid_format')
+      parseError.value = err
+      if (typeof toast?.error === 'function')
+        toast.error(err)
       return
     }
 
     parsedData.value = result.data
     status.value = 'ready'
+  }
+
+  async function handleJsonText(rawJson: string, sourceName = 'pasted-data.json') {
+    selectedFile.value = { name: sourceName } as unknown as File
+    parsedData.value = null
+    parseError.value = null
+    validationErrors.value = []
+    importResult.value = null
+    importProgress.value = 0
+    status.value = 'selecting'
+
+    const trimmed = rawJson.trim()
+    if (!trimmed) {
+      const err = t('migrate.import.errors.empty_content')
+      parseError.value = err
+      if (typeof toast?.error === 'function')
+        toast.error(err)
+      return
+    }
+
+    let data: unknown
+    try {
+      data = JSON.parse(trimmed)
+    }
+    catch (e) {
+      const err = t('migrate.import.errors.parse_error')
+      parseError.value = err
+      if (e instanceof Error)
+        validationErrors.value = [e.message]
+      if (typeof toast?.error === 'function')
+        toast.error(err)
+      return
+    }
+
+    const result = ImportDataSchema.safeParse(data)
+    if (!result.success) {
+      const errors = result.error.issues.slice(0, 10).map((error) => {
+        const path = error.path.join('.')
+        return `${path}: ${error.message}`
+      })
+      if (result.error.issues.length > 10)
+        errors.push(`… (+${result.error.issues.length - 10})`)
+
+      validationErrors.value = errors
+      const err = t('migrate.import.errors.invalid_format')
+      parseError.value = err
+      if (typeof toast?.error === 'function')
+        toast.error(err)
+      return
+    }
+
+    parsedData.value = result.data
+    status.value = 'ready'
+  }
+
+  function clearError() {
+    parseError.value = null
+    validationErrors.value = []
   }
 
   function mergeBatchResult(result: ImportResult, batchResult: ImportResult, batchStart: number) {
@@ -204,6 +285,8 @@ export function useLinkImport(options: UseLinkImportOptions = {}) {
     importProgress: readonly(importProgress),
     importResult: readonly(importResult),
     handleFile,
+    handleJsonText,
+    clearError,
     importLinks,
     downloadSuccessItems,
     downloadSkippedItems,

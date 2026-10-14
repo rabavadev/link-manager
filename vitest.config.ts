@@ -51,4 +51,7 @@ export default defineConfig(async ({ mode }) => ({
       return !isHandledValidationError(error)
     },
   },
+  ssr: {
+    noExternal: ['vue', '@vue/reactivity', '@vue/runtime-core', '@vue/shared', 'vue-sonner'],
+  },
 }))

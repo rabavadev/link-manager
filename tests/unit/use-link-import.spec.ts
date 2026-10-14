@@ -5,6 +5,7 @@ import { useLinkImport } from '../../app/composables/useLinkImport'
 const mocks = vi.hoisted(() => ({
   saveAsJson: vi.fn(),
   toastSuccess: vi.fn(),
+  toastError: vi.fn(),
 }))
 
 const originalGlobals = vi.hoisted(() => {
@@ -27,11 +28,12 @@ vi.mock('#shared/schemas/import', async () => import('../../shared/schemas/impor
 vi.mock('#shared/utils/export-file', async () => import('../../shared/utils/export-file'))
 vi.mock('@/utils/api', () => ({ useAPI: vi.fn() }))
 vi.mock('@/utils/file', () => ({ saveAsJson: mocks.saveAsJson }))
-vi.mock('vue-sonner', () => ({ toast: { success: mocks.toastSuccess } }))
+vi.mock('vue-sonner', () => ({ toast: { success: mocks.toastSuccess, error: mocks.toastError } }))
 
 beforeEach(() => {
   mocks.saveAsJson.mockReset()
   mocks.toastSuccess.mockReset()
+  mocks.toastError.mockReset()
 })
 
 afterEach(() => {
@@ -251,5 +253,42 @@ describe('useLinkImport', () => {
     expect(state.isImporting.value).toBe(false)
     expect(state.importResult.value).toBeNull()
     expect(state.importProgress.value).toBe(0)
+  })
+
+  it('accepts pasted valid JSON and rejects empty or malformed pasted JSON', async () => {
+    const valid = createImport()
+    await valid.handleJsonText(JSON.stringify({ version: '1.0', links: [link(0)] }))
+    expect(valid.parsedData.value?.links).toHaveLength(1)
+    expect(valid.selectedFile.value?.name).toBe('pasted-data.json')
+    expect(valid.parseError.value).toBeNull()
+
+    const empty = createImport()
+    await empty.handleJsonText('   ')
+    expect(empty.parsedData.value).toBeNull()
+    expect(empty.parseError.value).toBe('migrate.import.errors.empty_content')
+    expect(mocks.toastError).toHaveBeenCalledWith('migrate.import.errors.empty_content')
+
+    const malformed = createImport()
+    await malformed.handleJsonText('{ bad json')
+    expect(malformed.parsedData.value).toBeNull()
+    expect(malformed.parseError.value).toBe('migrate.import.errors.parse_error')
+    expect(mocks.toastError).toHaveBeenCalledWith('migrate.import.errors.parse_error')
+
+    const invalidSchema = createImport()
+    await invalidSchema.handleJsonText(JSON.stringify({ version: '1.0', links: [] }))
+    expect(invalidSchema.parsedData.value).toBeNull()
+    expect(invalidSchema.parseError.value).toBe('migrate.import.errors.invalid_format')
+    expect(invalidSchema.validationErrors.value).not.toHaveLength(0)
+  })
+
+  it('clears error state when clearError is called', async () => {
+    const state = createImport()
+    await state.handleJsonText('{')
+    expect(state.parseError.value).not.toBeNull()
+    expect(state.validationErrors.value).not.toHaveLength(0)
+
+    state.clearError()
+    expect(state.parseError.value).toBeNull()
+    expect(state.validationErrors.value).toEqual([])
   })
 })

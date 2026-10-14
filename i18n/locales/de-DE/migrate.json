@@ -49,9 +49,16 @@
     },
     "import": {
       "title": "Links importieren",
-      "description": "Laden Sie eine JSON-Datei hoch, um Links zu importieren",
+      "description": "Laden Sie eine JSON-Datei hoch oder fügen Sie JSON ein, um Links zu importieren",
       "preview_mode_tip": "Im Vorschaumodus können keine Links importiert werden.",
+      "tab_file": "Datei hochladen",
+      "tab_paste": "JSON einfügen",
+      "choose_file": "JSON-Datei auswählen",
       "dropzone": "JSON-Datei hierher ziehen oder klicken zum Hochladen",
+      "paste_placeholder": "JSON-Inhalt hier einfügen...",
+      "paste_button": "Eingefügtes JSON importieren",
+      "paste_description": "Fügen Sie den aus Sink exportierten JSON-Inhalt ein.",
+      "clear": "Löschen",
       "links_found": "{count} Links bereit zum Import",
       "button": "Import starten",
       "importing": "Importiere...",
@@ -70,6 +77,7 @@
         "invalid_json": "Ungültige JSON-Datei",
         "invalid_format": "Ungültiges Dateiformat. Bitte verwenden Sie eine von Sink exportierte Datei.",
         "parse_error": "Datei konnte nicht analysiert werden",
+        "empty_content": "JSON-Inhalt darf nicht leer sein",
         "batch_failed": "Dieser Importblock ist fehlgeschlagen."
       }
     }

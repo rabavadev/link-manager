@@ -49,9 +49,16 @@
     },
     "import": {
       "title": "Import Links",
-      "description": "Upload a JSON file to import links",
+      "description": "Upload a JSON file or paste JSON to import links",
       "preview_mode_tip": "Preview mode does not support importing links.",
-      "dropzone": "Drop JSON file here or click to upload",
+      "tab_file": "Upload File",
+      "tab_paste": "Paste JSON",
+      "choose_file": "Choose JSON File",
+      "dropzone": "Drop JSON file here or click to browse",
+      "paste_placeholder": "Paste JSON content here...",
+      "paste_button": "Import Pasted JSON",
+      "paste_description": "Paste the JSON content exported from Sink or matching the schema.",
+      "clear": "Clear",
       "links_found": "{count} links ready to import",
       "button": "Start Import",
       "importing": "Importing…",
@@ -70,6 +77,7 @@
         "invalid_json": "Invalid JSON file",
         "invalid_format": "Invalid file format. Please use a file exported from Sink.",
         "parse_error": "Failed to parse file",
+        "empty_content": "JSON content cannot be empty",
         "batch_failed": "This import batch failed."
       }
     }
