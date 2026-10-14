@@ -28,6 +28,10 @@ const deployEnvSchema = z.object({
   // Optional Wrangler preview bucket; falls back to DEPLOY_R2_BUCKET_NAME when R2 is enabled
   DEPLOY_R2_PREVIEW_BUCKET_NAME: optionalName,
   DEPLOY_ANALYTICS_DATASET: defaultName,
+  NUXT_CF_ACCOUNT_ID: optionalName,
+  NUXT_CF_API_TOKEN: optionalName,
+  NUXT_SITE_TOKEN: optionalName,
+  NUXT_DATASET: optionalName,
 })
 
 async function loadEnv() {
@@ -77,6 +81,16 @@ d1.database_name = env.DEPLOY_D1_DATABASE_NAME
 kv.id = env.DEPLOY_KV_NAMESPACE_ID
 kv.preview_id = env.DEPLOY_KV_PREVIEW_NAMESPACE_ID ?? env.DEPLOY_KV_NAMESPACE_ID
 analytics.dataset = env.DEPLOY_ANALYTICS_DATASET
+
+config.vars = config.vars || {}
+if (env.NUXT_SITE_TOKEN)
+  config.vars.NUXT_SITE_TOKEN = env.NUXT_SITE_TOKEN
+if (env.NUXT_CF_ACCOUNT_ID)
+  config.vars.NUXT_CF_ACCOUNT_ID = env.NUXT_CF_ACCOUNT_ID
+if (env.NUXT_CF_API_TOKEN)
+  config.vars.NUXT_CF_API_TOKEN = env.NUXT_CF_API_TOKEN
+if (env.NUXT_DATASET)
+  config.vars.NUXT_DATASET = env.NUXT_DATASET
 
 if (env.DEPLOY_R2_BUCKET_NAME) {
   const r2 = getBinding(config, 'r2_buckets', 'R2')

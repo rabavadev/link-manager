@@ -14,7 +14,9 @@
   ],
   "keep_vars": true,
   "vars": {
-    "NUXT_SITE_TOKEN": "m1Vzkw_OxLuxEKnPE7vQ7olS5PztzN2_VujXAG2Luuw"
+    "NUXT_SITE_TOKEN": "m1Vzkw_OxLuxEKnPE7vQ7olS5PztzN2_VujXAG2Luuw",
+    "NUXT_CF_ACCOUNT_ID": "aecab567d649bdcf9291f8f516264a3a",
+    "NUXT_DATASET": "sink"
   },
   "upload_source_maps": true,
   "observability": {
@@ -35,7 +37,7 @@
   "analytics_engine_datasets": [
     {
       "binding": "ANALYTICS",
-      "dataset": "sink" // Override with DEPLOY_ANALYTICS_DATASET (default: sink). Keep in sync with NUXT_DATASET at runtime.
+      "dataset": "sink"
     }
   ],
   "kv_namespaces": [
