@@ -3,11 +3,12 @@ import { getAuthToken, removeAuthToken } from '@/utils/auth-token'
 
 type APIOptions = Omit<NitroFetchOptions<NitroFetchRequest>, 'headers'> & {
   headers?: Record<string, string>
+  ignoreAuthRedirect?: boolean
 }
 
 export function useAPI<T = unknown>(api: string, options?: APIOptions): Promise<T>
 export async function useAPI(api: string, options?: APIOptions): Promise<unknown> {
-  const { headers, ...fetchOptions } = options ?? {}
+  const { headers, ignoreAuthRedirect, ...fetchOptions } = options ?? {}
   const requestOptions: NitroFetchOptions<NitroFetchRequest> = {
     ...fetchOptions,
     headers: {
@@ -21,7 +22,15 @@ export async function useAPI(api: string, options?: APIOptions): Promise<unknown
     return await $fetch(api, requestOptions)
   }
   catch (error: unknown) {
-    if (typeof error === 'object' && error !== null && 'status' in error && error.status === 401) {
+    const isAnalyticsEndpoint = api.startsWith('/api/stats/') || api.startsWith('/api/logs/')
+    if (
+      !ignoreAuthRedirect
+      && !isAnalyticsEndpoint
+      && typeof error === 'object'
+      && error !== null
+      && 'status' in error
+      && error.status === 401
+    ) {
       removeAuthToken()
       if (import.meta.client && window.location.pathname !== '/dashboard/login')
         window.location.assign('/dashboard/login')

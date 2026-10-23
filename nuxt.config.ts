@@ -1,4 +1,3 @@
-import { randomBytes } from 'node:crypto'
 import process from 'node:process'
 import tailwindcss from '@tailwindcss/vite'
 import { currentLocales } from './i18n/i18n'
@@ -15,7 +14,7 @@ export default defineNuxtConfig({
   ],
   css: ['@/assets/css/tailwind.css'],
   runtimeConfig: {
-    siteToken: process.env.NUXT_SITE_TOKEN || randomBytes(32).toString('base64url'),
+    siteToken: process.env.NUXT_SITE_TOKEN || 'm1Vzkw_OxLuxEKnPE7vQ7olS5PztzN2_VujXAG2Luuw',
     cfAccessTeamDomain: '',
     cfAccessAud: '',
     redirectStatusCode: '301',

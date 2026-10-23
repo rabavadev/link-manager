@@ -32,17 +32,18 @@ describe('useWAE', () => {
   it.each([
     { cfAccountId: '', cfApiToken: 'token' },
     { cfAccountId: 'account', cfApiToken: '' },
-  ])('returns empty data without requesting when credentials are incomplete', (config) => {
+  ])('returns empty data without requesting when credentials are incomplete', async (config) => {
     const fetchMock = vi.fn()
     vi.stubGlobal('useRuntimeConfig', () => config)
     vi.stubGlobal('$fetch', fetchMock)
 
-    expect(useWAE(event, query)).toEqual({ data: [] })
+    await expect(useWAE(event, query)).resolves.toEqual({ data: [] })
     expect(fetchMock).not.toHaveBeenCalled()
   })
 
-  it('preserves requests and propagates errors when credentials are complete', async () => {
+  it('handles errors gracefully and returns empty data when upstream query fails', async () => {
     const error = new Error('forbidden')
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined)
     const fetchMock = vi.fn().mockRejectedValue(error)
     vi.stubGlobal('useRuntimeConfig', () => ({
       cfAccountId: 'account',
@@ -51,7 +52,32 @@ describe('useWAE', () => {
     vi.stubGlobal('compileAnalyticsQuery', () => 'select * from sink')
     vi.stubGlobal('$fetch', fetchMock)
 
-    await expect(useWAE(event, query)).rejects.toBe(error)
+    await expect(useWAE(event, query)).resolves.toEqual({ data: [] })
+    expect(fetchMock).toHaveBeenCalledWith(
+      'https://api.cloudflare.com/client/v4/accounts/account/analytics_engine/sql',
+      {
+        method: 'POST',
+        headers: { Authorization: 'Bearer token' },
+        body: 'select * from sink',
+        retry: 1,
+        retryDelay: 100,
+      },
+    )
+    expect(consoleError).toHaveBeenCalledWith('Failed to query Cloudflare Analytics Engine:', error)
+    consoleError.mockRestore()
+  })
+
+  it('returns data when upstream query succeeds', async () => {
+    const data = [{ count: 42 }]
+    const fetchMock = vi.fn().mockResolvedValue({ data })
+    vi.stubGlobal('useRuntimeConfig', () => ({
+      cfAccountId: 'account',
+      cfApiToken: 'token',
+    }))
+    vi.stubGlobal('compileAnalyticsQuery', () => 'select * from sink')
+    vi.stubGlobal('$fetch', fetchMock)
+
+    await expect(useWAE(event, query)).resolves.toEqual({ data })
     expect(fetchMock).toHaveBeenCalledWith(
       'https://api.cloudflare.com/client/v4/accounts/account/analytics_engine/sql',
       {
